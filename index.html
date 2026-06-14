@@ -240,13 +240,20 @@
             <div class="w-full max-w-2xl bg-white brutal-border brutal-shadow p-6 md:p-8 flex flex-col items-center">
                 
                 <!-- Polaroid Container -->
-                <div class="bg-white p-4 pb-16 brutal-border shadow-lg transform -rotate-2 transition-transform duration-300 w-full mb-8 relative" id="photo-frame">
+                <div class="bg-white p-4 pb-24 brutal-border shadow-lg transform -rotate-2 transition-transform duration-300 w-full mb-8 relative" id="photo-frame">
                     <div id="photo-loading" class="absolute inset-0 flex items-center justify-center bg-black/10 z-10">
                         <div class="loader"></div>
                     </div>
                     <img id="current-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%20' /%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='20' fill='%23000'%3Esem fotos ainda...%3C/text%3E%3C/svg%3E" 
                          class="w-full h-auto aspect-square object-cover brutal-border bg-gray-200">
-                    <p id="photo-date" class="txt-brat text-xl mt-4 text-center absolute bottom-4 left-0 w-full">...</p>
+                    
+                    <div class="absolute bottom-3 left-0 w-full px-4 flex flex-col gap-2 z-20">
+                        <input type="text" id="photo-caption" placeholder="escreva algo sobre isso..." class="w-full txt-brat text-xl text-center bg-transparent border-b-2 border-transparent focus:border-black outline-none transition-colors placeholder-black/40 disabled:opacity-0" disabled>
+                        <div class="flex justify-center gap-4 w-full" id="photo-actions" style="display: none;">
+                            <button id="btn-save-caption" class="bg-black text-[#8ceb0d] txt-brat text-sm px-4 py-1 hover:bg-[#8ceb0d] hover:text-black transition-colors brutal-border">salvar texto</button>
+                            <button id="btn-delete-photo" class="bg-red-500 text-white txt-brat text-sm px-4 py-1 hover:bg-black transition-colors brutal-border">apagar</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Controles -->
@@ -462,7 +469,7 @@
         // ---------------------------------------------------------
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // As suas credenciais do Firebase
         const firebaseConfig = {
@@ -513,7 +520,10 @@
         const photoUpload = document.getElementById('photo-upload');
         const btnUploadTrigger = document.getElementById('btn-upload-trigger');
         const currentPhoto = document.getElementById('current-photo');
-        const photoDate = document.getElementById('photo-date');
+        const photoCaption = document.getElementById('photo-caption');
+        const photoActions = document.getElementById('photo-actions');
+        const btnSaveCaption = document.getElementById('btn-save-caption');
+        const btnDeletePhoto = document.getElementById('btn-delete-photo');
         const btnPrevPhoto = document.getElementById('btn-prev-photo');
         const btnNextPhoto = document.getElementById('btn-next-photo');
         const photoCounter = document.getElementById('photo-counter');
@@ -525,8 +535,16 @@
                 photoCounter.textContent = "0 / 0";
                 btnPrevPhoto.disabled = true;
                 btnNextPhoto.disabled = true;
+                photoCaption.value = '';
+                photoCaption.disabled = true;
+                photoActions.style.display = 'none';
+                currentPhoto.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%20' /%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='20' fill='%23000'%3Esem fotos ainda...%3C/text%3E%3C/svg%3E";
                 return;
             }
+
+            // Impede erros de navegação se uma foto for apagada
+            if (currentPhotoIndex >= photos.length) currentPhotoIndex = photos.length - 1;
+            if (currentPhotoIndex < 0) currentPhotoIndex = 0;
 
             const p = photos[currentPhotoIndex];
             
@@ -536,12 +554,10 @@
             
             currentPhoto.src = p.dataUrl;
             
-            let dStr = "agora pouco";
-            if (p.timestamp) {
-                const d = new Date(p.timestamp);
-                dStr = d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-            }
-            photoDate.textContent = dStr;
+            // Gerencia texto e botões
+            photoCaption.disabled = false;
+            photoCaption.value = p.caption || '';
+            photoActions.style.display = 'flex';
             
             photoCounter.textContent = `${currentPhotoIndex + 1} / ${photos.length}`;
             btnPrevPhoto.disabled = currentPhotoIndex === 0;
@@ -552,6 +568,39 @@
         btnNextPhoto.addEventListener('click', () => { if(currentPhotoIndex < photos.length - 1) { currentPhotoIndex++; updateAlbumUI(); } });
         
         btnUploadTrigger.addEventListener('click', () => photoUpload.click());
+
+        // Lógica de Salvar e Apagar
+        btnSaveCaption.addEventListener('click', async () => {
+            if (photos.length === 0 || !currentUser) return;
+            const p = photos[currentPhotoIndex];
+            const originalText = btnSaveCaption.textContent;
+            btnSaveCaption.textContent = 'salvando...';
+            
+            try {
+                const docRef = doc(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos', p.id);
+                await updateDoc(docRef, { caption: photoCaption.value });
+                btnSaveCaption.textContent = 'salvo!';
+            } catch(e) {
+                console.error(e);
+                btnSaveCaption.textContent = 'erro!';
+            }
+            setTimeout(() => { btnSaveCaption.textContent = originalText; }, 2000);
+        });
+
+        btnDeletePhoto.addEventListener('click', async () => {
+            if (photos.length === 0 || !currentUser) return;
+            const confirmDelete = confirm("tem certeza que quer apagar essa memória de vez?");
+            if (confirmDelete) {
+                const p = photos[currentPhotoIndex];
+                try {
+                    const docRef = doc(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos', p.id);
+                    await deleteDoc(docRef);
+                    // O listener do Firebase (onSnapshot) vai ver que sumiu e atualizar a tela sozinho
+                } catch(e) {
+                    console.error("Erro ao apagar:", e);
+                }
+            }
+        });
         
         // Lógica de compressão e upload de foto
         photoUpload.addEventListener('change', (e) => {
@@ -739,7 +788,8 @@
             const photosRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos');
             onSnapshot(photosRef, (snapshot) => {
                 const loaded = [];
-                snapshot.forEach(doc => { loaded.push(doc.data()); });
+                // Agora estamos pegando o ID de cada foto pra poder editar/apagar
+                snapshot.forEach(doc => { loaded.push({ id: doc.id, ...doc.data() }); });
                 
                 loaded.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
                 
