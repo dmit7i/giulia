@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100% giulia.</title>
-    <!-- STREAMING_CHUNK:Configuring HTML structure and Tailwind... -->
+    <title>giulia.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* STREAMING_CHUNK:Defining custom CSS and brutalist styling... */
         :root {
             --brat: #8ceb0d; 
             --dark: #000000;
@@ -60,28 +58,57 @@
             pointer-events: none;
         }
 
-        input:focus { outline: none; }
-
-        /* Marquee */
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .marquee {
-            white-space: nowrap;
-            animation: scroll 15s linear infinite;
-            display: inline-block;
-        }
+        input:focus, textarea:focus { outline: none; }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 14px; }
         ::-webkit-scrollbar-track { background: var(--brat); border-left: 3px solid var(--dark); }
         ::-webkit-scrollbar-thumb { background: var(--dark); }
+
+        /* Custom Slider (Range) */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 32px;
+            width: 32px;
+            background: var(--brat);
+            border: 4px solid var(--dark);
+            cursor: pointer;
+            margin-top: -12px;
+            box-shadow: 4px 4px 0px 0px var(--dark);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 12px;
+            cursor: pointer;
+            background: var(--dark);
+            border: 2px solid var(--dark);
+        }
+        /* Suporte para Firefox */
+        input[type=range]::-moz-range-thumb {
+            height: 32px;
+            width: 32px;
+            background: var(--brat);
+            border: 4px solid var(--dark);
+            cursor: pointer;
+            box-shadow: 4px 4px 0px 0px var(--dark);
+        }
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 12px;
+            cursor: pointer;
+            background: var(--dark);
+            border: 2px solid var(--dark);
+        }
     </style>
 </head>
 <body class="selection:bg-black selection:text-[#8ceb0d]">
 
-    <!-- STREAMING_CHUNK:Building the access gate... -->
     <!-- TELA DE ACESSO -->
     <div id="gate">
         <h1 class="txt-brat text-7xl md:text-9xl mb-2 text-center px-4">restrito.</h1>
@@ -98,14 +125,13 @@
         </div>
     </div>
 
-    <!-- STREAMING_CHUNK:Rendering the main content sections (Web Flow)... -->
     <!-- CONTEÚDO PRINCIPAL -->
     <main id="content" class="opacity-0 transition-opacity duration-1000 hidden">
             
             <!-- Intro (O Erro e o Recomeço) -->
             <section class="flex flex-col items-start w-full">
                 <h1 class="txt-brat text-[20vw] md:text-[14rem] leading-[0.8] mb-8 text-black drop-shadow-md">
-                    só você.
+                    giulia.
                 </h1>
                 <div class="bg-black text-white p-8 md:p-14 brutal-border brutal-shadow transform rotate-1 w-full md:w-3/4 self-end md:-mt-16 relative z-10">
                     <p class="txt-brat text-[#8ceb0d] text-4xl md:text-6xl leading-none mb-8">
@@ -120,9 +146,8 @@
                 </div>
             </section>
 
-            <!-- STREAMING_CHUNK:Rendering the "Universos" and "Memórias" section... -->
             <!-- O Contraste e a Conexão -->
-            <section class="flex flex-col w-full relative">
+            <section class="flex flex-col w-full relative mt-16">
                 <div class="bg-white text-black p-8 md:p-12 brutal-border brutal-shadow-white w-full md:w-2/3 transform -rotate-1 relative z-20">
                     <h2 class="txt-brat text-5xl md:text-7xl leading-none mb-6 border-b-8 border-black pb-4">
                         mundo próprio.
@@ -134,20 +159,19 @@
 
                 <div class="bg-[#8ceb0d] text-black p-8 md:p-12 brutal-border brutal-shadow w-full md:w-2/3 self-end transform rotate-1 mt-8 md:-mt-12 relative z-10">
                     <p class="font-bold text-xl md:text-3xl leading-relaxed">
-                        é admirável ver como você se conecta com o que curte. o jeito que você amarra memórias especiais, às coisas que vive revela uma profundidade muito bonita sua. <br><br>
+                        é admirável ver como você se conecta com o que curte. o jeito que você amarra memórias especiais às coisas que vive revela uma profundidade muito bonita sua. <br><br>
                         <span class="txt-brat text-4xl md:text-5xl bg-black text-[#8ceb0d] px-4 py-2 inline-block mt-4">eu te amo giulia.</span>
                     </p>
                 </div>
             </section>
 
-            <!-- STREAMING_CHUNK:Adding the new deep compliments section... -->
-            <!-- Novos Elogios (A presença e a edição limitada) -->
-            <section class="flex flex-col items-center w-full my-12">
+            <!-- Elogios Originais -->
+            <section class="flex flex-col items-center w-full my-20">
                 <h2 class="txt-brat text-[14vw] md:text-[10rem] leading-[0.8] mb-12 text-center text-black">
                     impacto.
                 </h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full px-4 md:px-8">
                     <div class="bg-black text-white p-8 brutal-border brutal-shadow transform -rotate-1">
                         <p class="txt-brat text-[#8ceb0d] text-3xl mb-4">frequência.</p>
                         <p class="font-bold text-xl md:text-2xl leading-relaxed">
@@ -162,28 +186,137 @@
                         </p>
                     </div>
                 </div>
+            </section>
+
+            <!-- Novos Elogios baseados na Apresentação -->
+            <section class="flex flex-col items-center w-full my-20 bg-black py-16 px-4 md:px-8 border-y-8 border-black">
+                <h2 class="txt-brat text-[#8ceb0d] text-6xl md:text-8xl leading-[0.8] mb-16 text-center">
+                    detalhes.
+                </h2>
                 
-                <!-- Conclusão Forte -->
-                <div class="w-full bg-black text-[#8ceb0d] p-12 text-center brutal-border mt-24 transform rotate-1">
-                    <p class="txt-brat text-4xl md:text-6xl">
-                        eu tenho tanta sorte de ter conhecido você.
-                    </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-7xl items-stretch">
+                    
+                    <!-- Card 1: Companhia -->
+                    <div class="bg-[#8ceb0d] text-black p-8 brutal-border brutal-shadow-white transform rotate-1 flex flex-col">
+                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">parceria invicta.</p>
+                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
+                            você faz o tempo simplesmente desaparecer. eu fujo de ligações longas como o diabo foge da cruz, mas com você eu passaria horas no telefone fácil. qualquer silêncio fica confortável e qualquer conversa idiota ganha um peso especial.
+                        </p>
+                    </div>
+
+                    <!-- Card 2: Estética -->
+                    <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform -rotate-1 flex flex-col">
+                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">pura estética.</p>
+                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
+                            você não apenas veste roupas, você cria uma atmosfera inteira. sua beleza física já é absurda por si só, mas a forma como você expressa sua essência através do seu estilo é um evento à parte. perto da sua autenticidade, o básico perde a cor.
+                        </p>
+                    </div>
+
+                    <!-- Card 3: Personalidade -->
+                    <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform rotate-1 flex flex-col">
+                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">assinatura de ouro.</p>
+                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
+                            sua personalidade é um mix perfeito de um humor genial e absurdamente específico, com um charme inegável. se você fosse uma ideia, seria daquelas que a gente reconhece de longe. você é o tipo de pessoa que deixa marca.
+                        </p>
+                    </div>
+
+                    <!-- Card 4: Cuidado e Carinho -->
+                    <div class="bg-[#8ceb0d] text-black p-8 brutal-border brutal-shadow-white transform -rotate-1 flex flex-col">
+                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">cuidado e carinho.</p>
+                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
+                            você tem um carinho imenso pelas pessoas que ama, isso é raro e eu admiro muito. você é mesmo uma flor.
+                        </p>
+                    </div>
+
                 </div>
             </section>
 
-        </div>
+            <!-- Área Interativa: Slider e Reclamações -->
+            <section class="flex flex-col items-center w-full my-24 px-4 md:px-8">
+                <div class="w-full max-w-4xl bg-white brutal-border brutal-shadow p-8 md:p-12">
+                    <h2 class="txt-brat text-4xl md:text-6xl text-black mb-8 border-b-8 border-black pb-4 text-center">
+                        fala comigo.
+                    </h2>
+                    
+                    <!-- 
+                    
+                    -->
+                    <form action="https://formsubmit.co/dmitrichaves@gmail.com" method="POST" class="flex flex-col gap-10">
+                        
+                        <!-- Campos Ocultos de Configuração do FormSubmit -->
+                        <!-- Desativa o Captcha chato e redireciona de volta para o site -->
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_next" value="https://seusite.github.io/obrigado.html"> <!-- Opcional: mude para a URL do seu site -->
+                        <input type="hidden" name="_subject" value="Nova mensagem da Giulia pelo Site!">
+
+                        <!-- Slider de Satisfação -->
+                        <div class="flex flex-col gap-4">
+                            <label for="satisfacao" class="txt-brat text-2xl md:text-3xl text-black">
+                                o quão satisfeita você está com a minha pessoa?
+                            </label>
+                            <div class="flex items-center gap-6">
+                                <input type="range" id="satisfacao" name="Nivel de Satisfacao" min="0" max="100" value="100" class="flex-grow">
+                                <span class="txt-brat text-4xl md:text-5xl text-[#8ceb0d] bg-black px-4 py-2 brutal-border" id="slider-val">100%</span>
+                            </div>
+                        </div>
+
+                        <!-- Caixa de Reclamações -->
+                        <div class="flex flex-col gap-4">
+                            <label for="reclamacoes" class="txt-brat text-2xl md:text-3xl text-black">
+                                reclamações (ou elogios se quiser rs):
+                            </label>
+                            <textarea id="reclamacoes" name="Mensagem" rows="5" placeholder="pode digitar abertamente aqui..." required
+                                      class="w-full bg-[#8ceb0d]/20 border-4 border-black p-4 font-bold text-xl text-black resize-none focus:bg-[#8ceb0d]/40 transition-colors"></textarea>
+                        </div>
+
+                        <!-- Botão Enviar -->
+                        <button type="submit" class="bg-black text-[#8ceb0d] txt-brat text-3xl md:text-4xl px-8 py-6 hover:bg-[#8ceb0d] hover:text-black transition-colors w-full brutal-border mt-4">
+                            enviar pro dmitri.
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Conclusão Forte -->
+            <div class="w-full bg-black text-[#8ceb0d] p-12 text-center brutal-border mt-12 transform rotate-1">
+                <p class="txt-brat text-4xl md:text-6xl">
+                    eu tenho tanta sorte de ter conhecido você.
+                </p>
+            </div>
+
+            <!-- Nota Oficial Dmitri Corp -->
+            <section class="flex flex-col items-center w-full my-24 px-4 md:px-8">
+                <div class="w-full max-w-4xl bg-[#8ceb0d] text-black p-8 md:p-12 brutal-border brutal-shadow transform -rotate-1 relative z-20">
+                    <h2 class="txt-brat text-3xl md:text-5xl mb-6 border-b-8 border-black pb-2 flex items-center justify-between">
+                        <span>nota oficial.</span>
+                        <span class="text-2xl md:text-4xl">®</span>
+                    </h2>
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed mb-8">
+                        a <strong class="bg-black text-[#8ceb0d] px-2 py-1 inline-block mt-1 brutal-border">Dmitri Corporation Ltda.</strong> agradece seu tempo. nosso CEO (extremamente charmoso) envia-lhe pessoalmente um abraço e agradece todo o tempo e atenção que deu pra ele.
+                    </p>
+                    
+                    <div class="bg-white text-black p-6 md:p-8 brutal-border brutal-shadow-white transform rotate-1 mt-6">
+                        <p class="font-bold text-lg md:text-xl leading-relaxed text-center">
+                            <span class="txt-brat text-black text-2xl block mb-2 border-b-4 border-black pb-1 inline-block">aviso legal:</span><br>
+                            ele adverte que, caso algo aconteça com ele, você poderá ficar com seu Nintendo Switch e todos os jogos e acessórios que envolvem ele.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
         <!-- Footer -->
-        <footer class="bg-black py-16 text-center border-t-8 border-[#8ceb0d]">
+        <footer class="bg-black py-16 text-center border-t-8 border-[#8ceb0d] mt-8">
             <p class="txt-brat text-[#8ceb0d] text-[10vw] md:text-[8rem] leading-none opacity-50 hover:opacity-100 transition-opacity cursor-default">
                 giulia.
             </p>
+            <p class="text-[#8ceb0d] mt-4 font-bold opacity-50">planejado e desenvolvido por dmitri para giulia.</p>
         </footer>
 
     </main>
 
     <script>
-        /* STREAMING_CHUNK:Logic for the access gate... */
+        
+        // Lógica do Portão
         const gate = document.getElementById('gate');
         const content = document.getElementById('content');
         const pass = document.getElementById('pass');
@@ -208,8 +341,14 @@
         pass.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') tryUnlock();
         });
+
+        // Lógica do Slider
+        const slider = document.getElementById('satisfacao');
+        const sliderVal = document.getElementById('slider-val');
+
+        slider.addEventListener('input', function() {
+            sliderVal.textContent = this.value + '%';
+        });
     </script>
 </body>
 </html>
-### planejado e desenvolvido por dmitri para giulia. não tem direitos reservados pq eu n sou uma empresa né porra mas
-é feito pra giulia, se vc não for ela, sai do site.
