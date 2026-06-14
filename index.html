@@ -458,39 +458,44 @@
         slider.addEventListener('input', function() { sliderVal.textContent = this.value + '%'; }); 
 
         // ---------------------------------------------------------
-        // INTEGRAÇÃO FIREBASE (Álbum e Calendário Persistentes)
+        // INTEGRAÇÃO FIREBASE (Para funcionar no GitHub Pages)
         // ---------------------------------------------------------
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'giulia-brat-site';
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+        // 🔴 ATENÇÃO: COLE AQUI AS CREDENCIAIS DO SEU FIREBASE 🔴
+        // Siga as instruções do chat para gerar isso no console.firebase.google.com
+        const firebaseConfig = {
+            apiKey: "AIzaSyApMFZElJ4xKpnoYFmd2E_hRvg0tUBJ928",
+            authDomain: "site-giulia-124cc.firebaseapp.com",
+            databaseURL: "https://site-giulia-124cc-default-rtdb.firebaseio.com",
+            projectId: "site-giulia-124cc",
+            storageBucket: "site-giulia-124cc.firebasestorage.app",
+            messagingSenderId: "873547139116",
+            appId: "1:873547139116:web:107145ef1ab8223de36989",
+            measurementId: "G-34QL50FWLG"
+        };
         
         let db = null;
         let currentUser = null;
 
-        if (firebaseConfigStr) {
+        // Variáveis de Estado
+        let photos = [];
+        let currentPhotoIndex = 0;
+        let calendarData = {}; // { "2023-10-15": { score: 100, text: "..." } }
+
+        // Verifica se você já atualizou as chaves
+        if (firebaseConfig.apiKey !== "SUA_API_KEY") {
             try {
-                const firebaseConfig = JSON.parse(firebaseConfigStr);
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
                 db = getFirestore(app);
 
-                const initAuth = async () => {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    } catch (error) {
-                        console.error("Erro de autenticação:", error);
-                        initInMemoryFeatures();
-                    }
-                };
-
-                initAuth();
+                signInAnonymously(auth).catch((error) => {
+                    console.error("Erro de autenticação:", error);
+                    initInMemoryFeatures();
+                });
 
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
@@ -498,16 +503,12 @@
                         initRealtimeFeatures();
                     }
                 });
-            } catch(e) { console.warn("Firebase falhando para in-memory", e); initInMemoryFeatures(); }
+            } catch(e) { console.warn("Erro ao iniciar Firebase", e); initInMemoryFeatures(); }
         } else {
+            console.warn("⚠️ Firebase não configurado. Rodando em modo local (dados não serão salvos no GitHub).");
             initInMemoryFeatures();
         }
 
-        // Variáveis de Estado
-        let photos = [];
-        let currentPhotoIndex = 0;
-        let calendarData = {}; // { "2023-10-15": { score: 100, text: "..." } }
-        
         // Elementos DOM Álbum
         const photoUpload = document.getElementById('photo-upload');
         const btnUploadTrigger = document.getElementById('btn-upload-trigger');
@@ -596,7 +597,7 @@
 
         function savePhoto(dataUrl) {
             if (db && currentUser) {
-                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_photos');
+                const colRef = collection(db, 'giulia_photos');
                 addDoc(colRef, {
                     dataUrl: dataUrl,
                     timestamp: Date.now()
@@ -740,7 +741,7 @@
             // Salvar no Firebase
             const dataToSave = { score, text, date: selectedDateStr };
             if (db && currentUser) {
-                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_calendar');
+                const colRef = collection(db, 'giulia_calendar');
                 addDoc(colRef, dataToSave).then(() => {
                     // Update será feito via listener
                     setTimeout(() => modal.classList.add('hidden'), 1500);
@@ -759,12 +760,12 @@
             if (!currentUser || !db) return;
 
             // Listener Álbum
-            const photosRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_photos');
+            const photosRef = collection(db, 'giulia_photos');
             onSnapshot(photosRef, (snapshot) => {
                 const loaded = [];
                 snapshot.forEach(doc => { loaded.push(doc.data()); });
                 
-                // Ordenar por data (simples via JS Rule 2)
+                // Ordenar por data
                 loaded.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
                 
                 photos = loaded;
@@ -775,7 +776,7 @@
             }, (error) => console.error("Erro Album:", error));
 
             // Listener Calendário
-            const calendarRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_calendar');
+            const calendarRef = collection(db, 'giulia_calendar');
             onSnapshot(calendarRef, (snapshot) => {
                 calendarData = {};
                 snapshot.forEach(doc => {
