@@ -1,354 +1,796 @@
-<!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>giulia.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --brat: #8ceb0d; 
-            --dark: #000000;
-        }
+<!DOCTYPE html> 
+<html lang="pt-BR" class="scroll-smooth"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>giulia.</title> 
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <style> 
+        :root { 
+            --brat: #8ceb0d;  
+            --dark: #000000; 
+        } 
 
-        body {
-            background-color: var(--brat);
-            color: var(--dark);
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+        body { 
+            background-color: var(--brat); 
+            color: var(--dark); 
+            font-family: Arial, Helvetica, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            overflow-x: hidden; 
+        } 
 
-        .txt-brat {
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            text-transform: lowercase;
-        }
+        .txt-brat { 
+            font-weight: 900; 
+            letter-spacing: -0.06em; 
+            text-transform: lowercase; 
+        } 
 
-        /* Efeitos brutalistas */
-        .brutal-border {
-            border: 4px solid var(--dark);
-        }
+        /* Efeitos brutalistas */ 
+        .brutal-border { border: 4px solid var(--dark); } 
+        .brutal-shadow { box-shadow: 8px 8px 0px 0px var(--dark); } 
+        .brutal-shadow-white { box-shadow: 8px 8px 0px 0px #ffffff; } 
         
-        .brutal-shadow {
-            box-shadow: 8px 8px 0px 0px var(--dark);
-        }
-
-        .brutal-shadow-white {
-            box-shadow: 8px 8px 0px 0px #ffffff;
-        }
-
-        /* Tela de Bloqueio */
-        #gate {
-            position: fixed;
-            inset: 0;
-            background-color: var(--brat);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.7s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.7s ease;
-        }
-
-        #gate.open {
-            transform: translateY(-100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        input:focus, textarea:focus { outline: none; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 14px; }
-        ::-webkit-scrollbar-track { background: var(--brat); border-left: 3px solid var(--dark); }
-        ::-webkit-scrollbar-thumb { background: var(--dark); }
-
-        /* Custom Slider (Range) */
-        input[type=range] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 32px;
-            width: 32px;
-            background: var(--brat);
-            border: 4px solid var(--dark);
-            cursor: pointer;
-            margin-top: -12px;
+        .brutal-btn:hover {
+            transform: translate(4px, 4px);
             box-shadow: 4px 4px 0px 0px var(--dark);
         }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 12px;
-            cursor: pointer;
-            background: var(--dark);
-            border: 2px solid var(--dark);
-        }
-        /* Suporte para Firefox */
-        input[type=range]::-moz-range-thumb {
-            height: 32px;
-            width: 32px;
-            background: var(--brat);
-            border: 4px solid var(--dark);
-            cursor: pointer;
-            box-shadow: 4px 4px 0px 0px var(--dark);
-        }
-        input[type=range]::-moz-range-track {
-            width: 100%;
-            height: 12px;
-            cursor: pointer;
-            background: var(--dark);
-            border: 2px solid var(--dark);
-        }
-    </style>
-</head>
-<body class="selection:bg-black selection:text-[#8ceb0d]">
 
-    <!-- TELA DE ACESSO -->
-    <div id="gate">
-        <h1 class="txt-brat text-7xl md:text-9xl mb-2 text-center px-4">restrito.</h1>
-        <p class="txt-brat text-xl md:text-2xl mb-12 text-center max-w-lg px-4 opacity-80">
-            insira algo nosso para entrar.
-        </p>
-        <div class="flex flex-col items-center w-full max-w-sm px-6">
-            <input type="password" id="pass" placeholder="senha..." 
-                   class="w-full bg-transparent border-b-8 border-black text-black text-4xl txt-brat py-2 mb-8 placeholder-black/30 text-center">
-            <button id="btn-enter" class="bg-black text-[#8ceb0d] txt-brat text-4xl px-8 py-4 hover:bg-white hover:text-black transition-colors w-full brutal-border brutal-shadow">
-                destrancar
-            </button>
-            <p id="feedback" class="txt-brat text-black text-xl mt-4 opacity-0 transition-opacity bg-white px-2 py-1 brutal-border">digite qualquer coisa.</p>
-        </div>
-    </div>
+        /* Tela de Bloqueio */ 
+        #gate { 
+            position: fixed; 
+            inset: 0; 
+            background-color: var(--brat); 
+            z-index: 9999; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            transition: transform 0.7s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.7s ease; 
+        } 
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main id="content" class="opacity-0 transition-opacity duration-1000 hidden">
+        #gate.open { 
+            transform: translateY(-100%); 
+            opacity: 0; 
+            pointer-events: none; 
+        } 
+
+        input:focus, textarea:focus { outline: none; } 
+
+        /* Custom Scrollbar */ 
+        ::-webkit-scrollbar { width: 14px; } 
+        ::-webkit-scrollbar-track { background: var(--brat); border-left: 3px solid var(--dark); } 
+        ::-webkit-scrollbar-thumb { background: var(--dark); } 
+
+        /* Custom Slider (Range) */ 
+        input[type=range] { 
+            -webkit-appearance: none; 
+            appearance: none; 
+            width: 100%; 
+            background: transparent; 
+        } 
+        input[type=range]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            height: 32px; width: 32px; 
+            background: var(--brat); 
+            border: 4px solid var(--dark); 
+            cursor: pointer; 
+            margin-top: -12px; 
+            box-shadow: 4px 4px 0px 0px var(--dark); 
+        } 
+        input[type=range]::-webkit-slider-runnable-track { 
+            width: 100%; height: 12px; 
+            cursor: pointer; background: var(--dark); 
+            border: 2px solid var(--dark); 
+        } 
+        input[type=range]::-moz-range-thumb { 
+            height: 32px; width: 32px; 
+            background: var(--brat); border: 4px solid var(--dark); 
+            cursor: pointer; box-shadow: 4px 4px 0px 0px var(--dark); 
+        } 
+        input[type=range]::-moz-range-track { 
+            width: 100%; height: 12px; cursor: pointer; 
+            background: var(--dark); border: 2px solid var(--dark); 
+        } 
+        
+        /* Album Animations */
+        .page-flip-enter { animation: flipIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        @keyframes flipIn {
+            0% { transform: perspective(1000px) rotateY(90deg); opacity: 0; }
+            100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid var(--brat);
+            border-top: 4px solid var(--dark);
+            border-radius: 50%;
+            width: 30px; height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style> 
+</head> 
+<body class="selection:bg-black selection:text-[#8ceb0d]"> 
+
+    <!-- TELA DE ACESSO --> 
+    <div id="gate"> 
+        <h1 class="txt-brat text-7xl md:text-9xl mb-2 text-center px-4">restrito.</h1> 
+        <p class="txt-brat text-xl md:text-2xl mb-12 text-center max-w-lg px-4 opacity-80"> 
+            insira algo nosso para entrar. 
+        </p> 
+        <div class="flex flex-col items-center w-full max-w-sm px-6"> 
+            <input type="password" id="pass" placeholder="senha..."  
+                   class="w-full bg-transparent border-b-8 border-black text-black text-4xl txt-brat py-2 mb-8 placeholder-black/30 text-center"> 
+            <button id="btn-enter" class="bg-black text-[#8ceb0d] txt-brat text-4xl px-8 py-4 hover:bg-white hover:text-black transition-colors w-full brutal-border brutal-shadow"> 
+                destrancar 
+            </button> 
+            <p id="feedback" class="txt-brat text-black text-xl mt-4 opacity-0 transition-opacity bg-white px-2 py-1 brutal-border">senha incorreta.</p> 
+        </div> 
+    </div> 
+
+    <!-- CONTEÚDO PRINCIPAL --> 
+    <main id="content" class="opacity-0 transition-opacity duration-1000 hidden pb-8"> 
             
-            <!-- Intro (O Erro e o Recomeço) -->
-            <section class="flex flex-col items-start w-full">
-                <h1 class="txt-brat text-[20vw] md:text-[14rem] leading-[0.8] mb-8 text-black drop-shadow-md">
-                    giulia.
-                </h1>
-                <div class="bg-black text-white p-8 md:p-14 brutal-border brutal-shadow transform rotate-1 w-full md:w-3/4 self-end md:-mt-16 relative z-10">
-                    <p class="txt-brat text-[#8ceb0d] text-4xl md:text-6xl leading-none mb-8">
-                        eu sei que vacilei.
-                    </p>
-                    <p class="font-bold text-xl md:text-3xl leading-snug mb-6">
-                        a grande questão é que você é singular demais para caber em um discurso reciclado. 
-                    </p>
-                    <p class="font-bold text-xl md:text-3xl leading-snug text-gray-300">
-                        eu quis fazer isso aqui do zero porque tudo o que eu penso e admiro em você é muito real. me senti mal por fazer elogios vazios, e você merece algo que seja exclusivamente desenhado pra você.
-                    </p>
-                </div>
-            </section>
+        <!-- Intro --> 
+        <section class="flex flex-col items-start w-full"> 
+            <h1 class="txt-brat text-[20vw] md:text-[14rem] leading-[0.8] mb-8 text-black drop-shadow-md"> 
+                giulia. 
+            </h1> 
 
-            <!-- O Contraste e a Conexão -->
-            <section class="flex flex-col w-full relative mt-16">
-                <div class="bg-white text-black p-8 md:p-12 brutal-border brutal-shadow-white w-full md:w-2/3 transform -rotate-1 relative z-20">
-                    <h2 class="txt-brat text-5xl md:text-7xl leading-none mb-6 border-b-8 border-black pb-4">
-                        mundo próprio.
-                    </h2>
-                    <p class="font-bold text-xl md:text-3xl leading-relaxed">
-                        nossos universos são bem diferentes quando o assunto é gosto pessoal, mas conviver com você me fez perceber o quão incrível isso é. eu sempre estive muito na minha bolha, e você me arrastou pra fora dela. a sensação é viciante, pra se dizer o mínimo, rs
-                    </p>
-                </div>
+            <div class="bg-black text-white p-8 md:p-14 brutal-border brutal-shadow transform rotate-1 w-full md:w-3/4 self-end md:-mt-16 relative z-10"> 
+                <p class="txt-brat text-[#8ceb0d] text-4xl md:text-6xl leading-none mb-8"> 
+                    eu sei que vacilei. 
+                </p> 
+                <p class="font-bold text-xl md:text-3xl leading-snug mb-6"> 
+                    a grande questão é que você é singular demais para caber em um discurso reciclado.  
+                </p> 
+                <p class="font-bold text-xl md:text-3xl leading-snug text-gray-300"> 
+                    eu quis fazer isso aqui do zero porque tudo o que eu penso e admiro em você é muito real. me senti mal por fazer elogios vazios, e você merece algo que seja exclusivamente desenhado pra você. 
+                </p> 
+            </div> 
+        </section> 
 
-                <div class="bg-[#8ceb0d] text-black p-8 md:p-12 brutal-border brutal-shadow w-full md:w-2/3 self-end transform rotate-1 mt-8 md:-mt-12 relative z-10">
-                    <p class="font-bold text-xl md:text-3xl leading-relaxed">
-                        é admirável ver como você se conecta com o que curte. o jeito que você amarra memórias especiais às coisas que vive revela uma profundidade muito bonita sua. <br><br>
-                        <span class="txt-brat text-4xl md:text-5xl bg-black text-[#8ceb0d] px-4 py-2 inline-block mt-4">eu te amo giulia.</span>
-                    </p>
-                </div>
-            </section>
+        <!-- O Contraste e a Conexão --> 
+        <section class="flex flex-col w-full relative mt-16"> 
+            <div class="bg-white text-black p-8 md:p-12 brutal-border brutal-shadow-white w-full md:w-2/3 transform -rotate-1 relative z-20"> 
+                <h2 class="txt-brat text-5xl md:text-7xl leading-none mb-6 border-b-8 border-black pb-4"> 
+                    mundo próprio. 
+                </h2> 
+                <p class="font-bold text-xl md:text-3xl leading-relaxed"> 
+                    nossos universos são bem diferentes quando o assunto é gosto pessoal, mas conviver com você me fez perceber o quão incrível isso é. eu sempre estive muito na minha bolha, e você me arrastou pra fora dela. a sensação é viciante, pra se dizer o mínimo, rs 
+                </p> 
+            </div> 
 
-            <!-- Elogios Originais -->
-            <section class="flex flex-col items-center w-full my-20">
-                <h2 class="txt-brat text-[14vw] md:text-[10rem] leading-[0.8] mb-12 text-center text-black">
-                    impacto.
-                </h2>
+            <div class="bg-[#8ceb0d] text-black p-8 md:p-12 brutal-border brutal-shadow w-full md:w-2/3 self-end transform rotate-1 mt-8 md:-mt-12 relative z-10"> 
+                <p class="font-bold text-xl md:text-3xl leading-relaxed"> 
+                    é admirável ver como você se conecta com o que curte. o jeito que você amarra memórias especiais às coisas que vive revela uma profundidade muito bonita sua. <br><br> 
+                    <span class="txt-brat text-4xl md:text-5xl bg-black text-[#8ceb0d] px-4 py-2 inline-block mt-4">eu te amo giulia.</span> 
+                </p> 
+            </div> 
+        </section> 
+
+        <!-- Elogios Originais --> 
+        <section class="flex flex-col items-center w-full my-20"> 
+            <h2 class="txt-brat text-[14vw] md:text-[10rem] leading-[0.8] mb-12 text-center text-black"> 
+                impacto. 
+            </h2> 
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full px-4 md:px-8"> 
+                <div class="bg-black text-white p-8 brutal-border brutal-shadow transform -rotate-1"> 
+                    <p class="txt-brat text-[#8ceb0d] text-3xl mb-4">frequência.</p> 
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed"> 
+                        toda vez que você tá perto, a frequência do lugar muda. é como se tudo ficasse mais vivo, mais intenso. você não precisa se esforçar pra preencher um espaço. 
+                    </p> 
+                </div> 
+
+                <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform rotate-1 mt-0 md:mt-16"> 
+                    <p class="txt-brat text-black text-3xl mb-4">edição limitada.</p> 
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed"> 
+                        você é inconfundível. não tem cópia, não tem rascunho, não tem ninguém que chegue perto de ser igual a você. ter a chance de dividir meu tempo com você e conhecer essa sua profundidade é um privilégio que eu valorizo demais. 
+                    </p> 
+                </div> 
+            </div> 
+        </section> 
+
+        <!-- Detalhes --> 
+        <section class="flex flex-col items-center w-full my-20 bg-black py-16 px-4 md:px-8 border-y-8 border-black"> 
+            <h2 class="txt-brat text-[#8ceb0d] text-6xl md:text-8xl leading-[0.8] mb-16 text-center"> 
+                detalhes. 
+            </h2> 
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-7xl items-stretch"> 
+                <div class="bg-[#8ceb0d] text-black p-8 brutal-border brutal-shadow-white transform rotate-1 flex flex-col"> 
+                    <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">parceria invicta.</p> 
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4"> 
+                        você faz o tempo simplesmente desaparecer. eu fujo de ligações longas como o diabo foge da cruz, mas com você eu passaria horas no telefone fácil. qualquer silêncio fica confortável e qualquer conversa idiota ganha um peso especial. 
+                    </p> 
+                </div> 
+
+                <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform -rotate-1 flex flex-col"> 
+                    <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">pura estética.</p> 
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4"> 
+                        você não apenas veste roupas, você cria uma atmosfera inteira. sua beleza física já é absurda por si só, mas a forma como você expressa sua essência através do seu estilo é um evento à parte. perto da sua autenticidade, o básico perde a cor. 
+                    </p> 
+                </div> 
+
+                <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform rotate-1 flex flex-col"> 
+                    <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">assinatura de ouro.</p> 
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4"> 
+                        sua personalidade é um mix perfeito de um humor genial e absurdamente específico, com um charme inegável. se você fosse uma ideia, seria daquelas que a gente reconhece de longe. você é o tipo de pessoa que deixa marca. 
+                    </p> 
+                </div> 
+
+                <div class="bg-[#8ceb0d] text-black p-8 brutal-border brutal-shadow-white transform -rotate-1 flex flex-col"> 
+                    <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">cuidado e carinho.</p> 
+                    <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4"> 
+                        você tem um carinho imenso pelas pessoas que ama, isso é raro e eu admiro muito. você é mesmo uma flor. 
+                    </p> 
+                </div> 
+            </div> 
+        </section> 
+
+        <!-- NOVO: Álbum de Fotos -->
+        <section class="flex flex-col items-center w-full my-24 px-4 md:px-8">
+            <h2 class="txt-brat text-[12vw] md:text-[8rem] leading-[0.8] mb-12 text-center text-black"> 
+                nossos registros. 
+            </h2>
+            
+            <div class="w-full max-w-2xl bg-white brutal-border brutal-shadow p-6 md:p-8 flex flex-col items-center">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full px-4 md:px-8">
-                    <div class="bg-black text-white p-8 brutal-border brutal-shadow transform -rotate-1">
-                        <p class="txt-brat text-[#8ceb0d] text-3xl mb-4">frequência.</p>
-                        <p class="font-bold text-xl md:text-2xl leading-relaxed">
-                            toda vez que você tá perto, a frequência do lugar muda. é como se tudo ficasse mais vivo, mais intenso. você não precisa se esforçar pra preencher um espaço.
-                        </p>
+                <!-- Polaroid Container -->
+                <div class="bg-white p-4 pb-16 brutal-border shadow-lg transform -rotate-2 transition-transform duration-300 w-full mb-8 relative" id="photo-frame">
+                    <div id="photo-loading" class="absolute inset-0 flex items-center justify-center bg-black/10 z-10">
+                        <div class="loader"></div>
                     </div>
-
-                    <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform rotate-1 mt-0 md:mt-16">
-                        <p class="txt-brat text-black text-3xl mb-4">edição limitada.</p>
-                        <p class="font-bold text-xl md:text-2xl leading-relaxed">
-                            você é inconfundível. não tem cópia, não tem rascunho, não tem ninguém que chegue perto de ser igual a você. ter a chance de dividir meu tempo com você e conhecer essa sua profundidade é um privilégio que eu valorizo demais.
-                        </p>
-                    </div>
+                    <img id="current-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%20' /%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='20' fill='%23000'%3Esem fotos ainda...%3C/text%3E%3C/svg%3E" 
+                         class="w-full h-auto aspect-square object-cover brutal-border bg-gray-200">
+                    <p id="photo-date" class="txt-brat text-xl mt-4 text-center absolute bottom-4 left-0 w-full">...</p>
                 </div>
-            </section>
 
-            <!-- Novos Elogios baseados na Apresentação -->
-            <section class="flex flex-col items-center w-full my-20 bg-black py-16 px-4 md:px-8 border-y-8 border-black">
-                <h2 class="txt-brat text-[#8ceb0d] text-6xl md:text-8xl leading-[0.8] mb-16 text-center">
-                    detalhes.
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-7xl items-stretch">
-                    
-                    <!-- Card 1: Companhia -->
-                    <div class="bg-[#8ceb0d] text-black p-8 brutal-border brutal-shadow-white transform rotate-1 flex flex-col">
-                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">parceria invicta.</p>
-                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
-                            você faz o tempo simplesmente desaparecer. eu fujo de ligações longas como o diabo foge da cruz, mas com você eu passaria horas no telefone fácil. qualquer silêncio fica confortável e qualquer conversa idiota ganha um peso especial.
-                        </p>
-                    </div>
-
-                    <!-- Card 2: Estética -->
-                    <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform -rotate-1 flex flex-col">
-                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">pura estética.</p>
-                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
-                            você não apenas veste roupas, você cria uma atmosfera inteira. sua beleza física já é absurda por si só, mas a forma como você expressa sua essência através do seu estilo é um evento à parte. perto da sua autenticidade, o básico perde a cor.
-                        </p>
-                    </div>
-
-                    <!-- Card 3: Personalidade -->
-                    <div class="bg-white text-black p-8 brutal-border brutal-shadow-white transform rotate-1 flex flex-col">
-                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">assinatura de ouro.</p>
-                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
-                            sua personalidade é um mix perfeito de um humor genial e absurdamente específico, com um charme inegável. se você fosse uma ideia, seria daquelas que a gente reconhece de longe. você é o tipo de pessoa que deixa marca.
-                        </p>
-                    </div>
-
-                    <!-- Card 4: Cuidado e Carinho -->
-                    <div class="bg-[#8ceb0d] text-black p-8 brutal-border brutal-shadow-white transform -rotate-1 flex flex-col">
-                        <p class="txt-brat text-black text-3xl mb-4 border-b-4 border-black inline-block pb-1 self-start">cuidado e carinho.</p>
-                        <p class="font-bold text-xl md:text-2xl leading-relaxed mt-4">
-                            você tem um carinho imenso pelas pessoas que ama, isso é raro e eu admiro muito. você é mesmo uma flor.
-                        </p>
-                    </div>
-
+                <!-- Controles -->
+                <div class="flex w-full items-center justify-between mb-8">
+                    <button id="btn-prev-photo" class="bg-black text-[#8ceb0d] txt-brat text-2xl px-6 py-2 hover:bg-white hover:text-black transition-colors brutal-border brutal-btn disabled:opacity-50 disabled:cursor-not-allowed">
+                        &lt; voltar
+                    </button>
+                    <span id="photo-counter" class="txt-brat text-2xl bg-[#8ceb0d] px-4 py-1 brutal-border">0 / 0</span>
+                    <button id="btn-next-photo" class="bg-black text-[#8ceb0d] txt-brat text-2xl px-6 py-2 hover:bg-white hover:text-black transition-colors brutal-border brutal-btn disabled:opacity-50 disabled:cursor-not-allowed">
+                        avançar &gt;
+                    </button>
                 </div>
-            </section>
 
-            <!-- Área Interativa: Slider e Reclamações -->
-            <section class="flex flex-col items-center w-full my-24 px-4 md:px-8">
-                <div class="w-full max-w-4xl bg-white brutal-border brutal-shadow p-8 md:p-12">
-                    <h2 class="txt-brat text-4xl md:text-6xl text-black mb-8 border-b-8 border-black pb-4 text-center">
-                        fala comigo.
-                    </h2>
-                    
-                    <!-- 
-                    
-                    -->
-                    <form action="https://formsubmit.co/dmitrichaves@gmail.com" method="POST" class="flex flex-col gap-10">
-                        
-                        <!-- Campos Ocultos de Configuração do FormSubmit -->
-                        <!-- Desativa o Captcha chato e redireciona de volta para o site -->
-                        <input type="hidden" name="_captcha" value="false">
-                        <input type="hidden" name="_next" value="https://seusite.github.io/obrigado.html"> <!-- Opcional: mude para a URL do seu site -->
-                        <input type="hidden" name="_subject" value="Nova mensagem da Giulia pelo Site!">
-
-                        <!-- Slider de Satisfação -->
-                        <div class="flex flex-col gap-4">
-                            <label for="satisfacao" class="txt-brat text-2xl md:text-3xl text-black">
-                                o quão satisfeita você está com a minha pessoa?
-                            </label>
-                            <div class="flex items-center gap-6">
-                                <input type="range" id="satisfacao" name="Nivel de Satisfacao" min="0" max="100" value="100" class="flex-grow">
-                                <span class="txt-brat text-4xl md:text-5xl text-[#8ceb0d] bg-black px-4 py-2 brutal-border" id="slider-val">100%</span>
-                            </div>
-                        </div>
-
-                        <!-- Caixa de Reclamações -->
-                        <div class="flex flex-col gap-4">
-                            <label for="reclamacoes" class="txt-brat text-2xl md:text-3xl text-black">
-                                reclamações (ou elogios se quiser rs):
-                            </label>
-                            <textarea id="reclamacoes" name="Mensagem" rows="5" placeholder="pode digitar abertamente aqui..." required
-                                      class="w-full bg-[#8ceb0d]/20 border-4 border-black p-4 font-bold text-xl text-black resize-none focus:bg-[#8ceb0d]/40 transition-colors"></textarea>
-                        </div>
-
-                        <!-- Botão Enviar -->
-                        <button type="submit" class="bg-black text-[#8ceb0d] txt-brat text-3xl md:text-4xl px-8 py-6 hover:bg-[#8ceb0d] hover:text-black transition-colors w-full brutal-border mt-4">
-                            enviar pro dmitri.
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Conclusão Forte -->
-            <div class="w-full bg-black text-[#8ceb0d] p-12 text-center brutal-border mt-12 transform rotate-1">
-                <p class="txt-brat text-4xl md:text-6xl">
-                    eu tenho tanta sorte de ter conhecido você.
-                </p>
+                <!-- Upload -->
+                <button id="btn-upload-trigger" class="bg-[#8ceb0d] text-black txt-brat text-3xl md:text-4xl px-8 py-4 w-full hover:bg-black hover:text-[#8ceb0d] transition-colors brutal-border brutal-shadow">
+                    + adicionar memória
+                </button>
+                <input type="file" id="photo-upload" accept="image/*" class="hidden">
             </div>
+        </section>
 
-            <!-- Nota Oficial Dmitri Corp -->
-            <section class="flex flex-col items-center w-full my-24 px-4 md:px-8">
-                <div class="w-full max-w-4xl bg-[#8ceb0d] text-black p-8 md:p-12 brutal-border brutal-shadow transform -rotate-1 relative z-20">
-                    <h2 class="txt-brat text-3xl md:text-5xl mb-6 border-b-8 border-black pb-2 flex items-center justify-between">
-                        <span>nota oficial.</span>
-                        <span class="text-2xl md:text-4xl">®</span>
-                    </h2>
-                    <p class="font-bold text-xl md:text-2xl leading-relaxed mb-8">
-                        a <strong class="bg-black text-[#8ceb0d] px-2 py-1 inline-block mt-1 brutal-border">Dmitri Corporation Ltda.</strong> agradece seu tempo. nosso CEO (extremamente charmoso) envia-lhe pessoalmente um abraço e agradece todo o tempo e atenção que deu pra ele.
-                    </p>
-                    
-                    <div class="bg-white text-black p-6 md:p-8 brutal-border brutal-shadow-white transform rotate-1 mt-6">
-                        <p class="font-bold text-lg md:text-xl leading-relaxed text-center">
-                            <span class="txt-brat text-black text-2xl block mb-2 border-b-4 border-black pb-1 inline-block">aviso legal:</span><br>
-                            ele adverte que, caso algo aconteça com ele, você poderá ficar com seu Nintendo Switch e todos os jogos e acessórios que envolvem ele.
-                        </p>
+        <!-- NOVO: Calendário de Avaliações -->
+        <section class="flex flex-col items-center w-full my-24 px-4 md:px-8 bg-black py-16 border-y-8 border-black">
+            <h2 class="txt-brat text-[#8ceb0d] text-5xl md:text-7xl leading-none mb-4 text-center"> 
+                diário. 
+            </h2>
+            <p class="text-white font-bold text-center mb-12 max-w-lg">
+                clique em um dia para fazer a sua avaliação diária sobre a gente.
+            </p>
+
+            <div class="w-full max-w-4xl bg-white brutal-border brutal-shadow-white p-6 md:p-8">
+                <div class="flex justify-between items-center mb-8 border-b-8 border-black pb-4">
+                    <button id="prev-month" class="txt-brat text-3xl hover:text-[#8ceb0d] transition-colors">&lt;</button>
+                    <h3 id="month-display" class="txt-brat text-4xl md:text-5xl uppercase">MÊS</h3>
+                    <button id="next-month" class="txt-brat text-3xl hover:text-[#8ceb0d] transition-colors">&gt;</button>
+                </div>
+
+                <!-- Dias da semana -->
+                <div class="grid grid-cols-7 gap-2 mb-4 text-center">
+                    <div class="txt-brat text-xl">dom</div>
+                    <div class="txt-brat text-xl">seg</div>
+                    <div class="txt-brat text-xl">ter</div>
+                    <div class="txt-brat text-xl">qua</div>
+                    <div class="txt-brat text-xl">qui</div>
+                    <div class="txt-brat text-xl">sex</div>
+                    <div class="txt-brat text-xl">sáb</div>
+                </div>
+
+                <!-- Grid de dias gerado por JS -->
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2 md:gap-4">
+                    <!-- Dias inseridos aqui -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal Calendário -->
+        <div id="calendar-modal" class="hidden fixed inset-0 bg-black/90 z-50 flex flex-col justify-center items-center p-4">
+            <div class="bg-[#8ceb0d] w-full max-w-2xl brutal-border brutal-shadow-white p-8 relative">
+                <button id="close-modal" class="absolute top-4 right-4 txt-brat text-4xl hover:text-white">&times;</button>
+                
+                <h3 id="modal-date-title" class="txt-brat text-4xl mb-6 border-b-4 border-black pb-2">dia 00</h3>
+                
+                <form id="daily-form" class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label class="txt-brat text-2xl">nota pro dia (1-100):</label>
+                        <div class="flex items-center gap-4">
+                            <input type="range" id="daily-score" min="0" max="100" value="100" class="flex-grow">
+                            <span id="daily-score-val" class="txt-brat text-3xl bg-black text-[#8ceb0d] px-3 py-1 brutal-border">100</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="txt-brat text-2xl">como foi hoje?</label>
+                        <textarea id="daily-text" rows="4" placeholder="relatório diário..." required class="w-full bg-white border-4 border-black p-4 font-bold text-lg resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-submit-daily" class="bg-black text-[#8ceb0d] txt-brat text-3xl px-6 py-4 hover:bg-white hover:text-black transition-colors brutal-border mt-2">
+                        salvar e enviar
+                    </button>
+                    <p id="daily-status" class="txt-brat text-center mt-2 hidden">enviando...</p>
+                </form>
+                
+                <!-- Display para dias já preenchidos -->
+                <div id="daily-view" class="hidden flex flex-col gap-4">
+                    <div class="bg-black text-[#8ceb0d] p-4 brutal-border">
+                        <p class="txt-brat text-xl">nota:</p>
+                        <p id="view-score" class="txt-brat text-5xl">100</p>
+                    </div>
+                    <div class="bg-white text-black p-4 brutal-border">
+                        <p class="txt-brat text-xl border-b-2 border-black mb-2">relatório:</p>
+                        <p id="view-text" class="font-bold text-lg whitespace-pre-wrap"></p>
                     </div>
                 </div>
-            </section>
+            </div>
+        </div>
 
-        <!-- Footer -->
-        <footer class="bg-black py-16 text-center border-t-8 border-[#8ceb0d] mt-8">
-            <p class="txt-brat text-[#8ceb0d] text-[10vw] md:text-[8rem] leading-none opacity-50 hover:opacity-100 transition-opacity cursor-default">
-                giulia.
-            </p>
-            <p class="text-[#8ceb0d] mt-4 font-bold opacity-50">planejado e desenvolvido por dmitri para giulia.</p>
-        </footer>
-
-    </main>
-
-    <script>
-        
-        // Lógica do Portão
-        const gate = document.getElementById('gate');
-        const content = document.getElementById('content');
-        const pass = document.getElementById('pass');
-        const btnEnter = document.getElementById('btn-enter');
-        const feedback = document.getElementById('feedback');
-
-        function tryUnlock() {
-            if (pass.value.trim().length > 0) {
-                gate.classList.add('open');
-                content.classList.remove('hidden'); 
+        <!-- Área Interativa Original: Slider e Reclamações --> 
+        <section class="flex flex-col items-center w-full my-24 px-4 md:px-8"> 
+            <div class="w-full max-w-4xl bg-white brutal-border brutal-shadow p-8 md:p-12"> 
+                <h2 class="txt-brat text-4xl md:text-6xl text-black mb-8 border-b-8 border-black pb-4 text-center"> 
+                    fala comigo. 
+                </h2> 
                 
-                setTimeout(() => {
-                    content.classList.remove('opacity-0');
-                }, 100);
+                <form action="https://formsubmit.co/dmitrichaves@gmail.com" method="POST" class="flex flex-col gap-10"> 
+                    <input type="hidden" name="_captcha" value="false"> 
+                    <input type="hidden" name="_subject" value="Nova mensagem da Giulia pelo Site!"> 
+
+                    <div class="flex flex-col gap-4"> 
+                        <label for="satisfacao" class="txt-brat text-2xl md:text-3xl text-black"> 
+                            o quão satisfeita você está com a minha pessoa? 
+                        </label> 
+                        <div class="flex items-center gap-6"> 
+                            <input type="range" id="satisfacao" name="Nivel de Satisfacao" min="0" max="100" value="100" class="flex-grow"> 
+                            <span class="txt-brat text-4xl md:text-5xl text-[#8ceb0d] bg-black px-4 py-2 brutal-border" id="slider-val">100%</span> 
+                        </div> 
+                    </div> 
+
+                    <div class="flex flex-col gap-4"> 
+                        <label for="reclamacoes" class="txt-brat text-2xl md:text-3xl text-black"> 
+                            reclamações (ou elogios se quiser rs): 
+                        </label> 
+                        <textarea id="reclamacoes" name="Mensagem" rows="5" placeholder="pode digitar abertamente aqui..." required 
+                                  class="w-full bg-[#8ceb0d]/20 border-4 border-black p-4 font-bold text-xl text-black resize-none focus:bg-[#8ceb0d]/40 transition-colors"></textarea> 
+                    </div> 
+
+                    <button type="submit" class="bg-black text-[#8ceb0d] txt-brat text-3xl md:text-4xl px-8 py-6 hover:bg-[#8ceb0d] hover:text-black transition-colors w-full brutal-border mt-4"> 
+                        enviar pro dmitri. 
+                    </button> 
+                </form> 
+            </div> 
+        </section> 
+
+        <!-- Conclusão Forte --> 
+        <div class="w-full bg-black text-[#8ceb0d] p-12 text-center brutal-border mt-12 transform rotate-1"> 
+            <p class="txt-brat text-4xl md:text-6xl"> 
+                eu tenho tanta sorte de ter conhecido você. 
+            </p> 
+        </div> 
+
+        <!-- Nota Oficial Dmitri Corp --> 
+        <section class="flex flex-col items-center w-full my-24 px-4 md:px-8"> 
+            <div class="w-full max-w-4xl bg-[#8ceb0d] text-black p-8 md:p-12 brutal-border brutal-shadow transform -rotate-1 relative z-20"> 
+                <h2 class="txt-brat text-3xl md:text-5xl mb-6 border-b-8 border-black pb-2 flex items-center justify-between"> 
+                    <span>nota oficial.</span> 
+                    <span class="text-2xl md:text-4xl">®</span> 
+                </h2> 
+                <p class="font-bold text-xl md:text-2xl leading-relaxed mb-8"> 
+                    a <strong class="bg-black text-[#8ceb0d] px-2 py-1 inline-block mt-1 brutal-border">Dmitri Corporation Ltda.</strong> agradece seu tempo. nosso CEO (extremamente charmoso) envia-lhe pessoalmente um abraço e agradece todo o tempo e atenção que deu pra ele. 
+                </p> 
+                
+                <div class="bg-white text-black p-6 md:p-8 brutal-border brutal-shadow-white transform rotate-1 mt-6"> 
+                    <p class="font-bold text-lg md:text-xl leading-relaxed text-center"> 
+                        <span class="txt-brat text-black text-2xl block mb-2 border-b-4 border-black pb-1 inline-block">aviso legal:</span><br> 
+                        ele adverte que, caso algo aconteça com ele, você poderá ficar com seu Nintendo Switch e todos os jogos e acessórios que envolvem ele. 
+                    </p> 
+                </div> 
+            </div> 
+        </section> 
+
+        <!-- Footer --> 
+        <footer class="bg-black py-16 text-center border-t-8 border-[#8ceb0d] mt-8"> 
+            <p class="txt-brat text-[#8ceb0d] text-[10vw] md:text-[8rem] leading-none opacity-50 hover:opacity-100 transition-opacity cursor-default"> 
+                giulia. 
+            </p> 
+            <p class="text-[#8ceb0d] mt-4 font-bold opacity-50">planejado e desenvolvido por dmitri para giulia.</p> 
+        </footer> 
+
+    </main> 
+
+    <!-- FIREBASE & LÓGICA DO SITE -->
+    <script type="module"> 
+        // Lógica do Portão Original
+        const gate = document.getElementById('gate'); 
+        const content = document.getElementById('content'); 
+        const pass = document.getElementById('pass'); 
+        const btnEnter = document.getElementById('btn-enter'); 
+        const feedback = document.getElementById('feedback'); 
+
+        // Lista de senhas permitidas (tudo em minúsculo para facilitar a validação)
+        const senhasValidas = [
+            "giulia", "giulia arci", "giulia arci salgado andrade machado",
+            "ryan", "ci", "giovanna", "marquinhos", 
+            "030506", "03/05/06", "03/05/2006", 
+            "giudi", "digiu", "ou nada a ver?", 
+            "a gente se passa", "você faz isso com seus amigos", "voce faz isso com seus amigos",
+            "brat", "economia", "quarta-feira", "quarta feira",
+            "dmitri", "dmitri chaves teixeira", 
+            "230207", "23/02/2007", "23/02/07"
+        ];
+
+        function tryUnlock() { 
+            const tentativa = pass.value.trim().toLowerCase();
+            
+            if (senhasValidas.includes(tentativa)) { 
+                gate.classList.add('open'); 
+                content.classList.remove('hidden');  
+                setTimeout(() => { content.classList.remove('opacity-0'); }, 100); 
+            } else { 
+                feedback.style.opacity = '1'; 
+                setTimeout(() => feedback.style.opacity = '0', 2000); 
+            } 
+        } 
+        btnEnter.addEventListener('click', tryUnlock); 
+        pass.addEventListener('keypress', (e) => { if (e.key === 'Enter') tryUnlock(); }); 
+
+        // Lógica do Slider Original
+        const slider = document.getElementById('satisfacao'); 
+        const sliderVal = document.getElementById('slider-val'); 
+        slider.addEventListener('input', function() { sliderVal.textContent = this.value + '%'; }); 
+
+        // ---------------------------------------------------------
+        // INTEGRAÇÃO FIREBASE (Álbum e Calendário Persistentes)
+        // ---------------------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'giulia-brat-site';
+        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+        
+        let db = null;
+        let currentUser = null;
+
+        if (firebaseConfigStr) {
+            try {
+                const firebaseConfig = JSON.parse(firebaseConfigStr);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                db = getFirestore(app);
+
+                const initAuth = async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Erro de autenticação:", error);
+                        initInMemoryFeatures();
+                    }
+                };
+
+                initAuth();
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        initRealtimeFeatures();
+                    }
+                });
+            } catch(e) { console.warn("Firebase falhando para in-memory", e); initInMemoryFeatures(); }
+        } else {
+            initInMemoryFeatures();
+        }
+
+        // Variáveis de Estado
+        let photos = [];
+        let currentPhotoIndex = 0;
+        let calendarData = {}; // { "2023-10-15": { score: 100, text: "..." } }
+        
+        // Elementos DOM Álbum
+        const photoUpload = document.getElementById('photo-upload');
+        const btnUploadTrigger = document.getElementById('btn-upload-trigger');
+        const currentPhoto = document.getElementById('current-photo');
+        const photoDate = document.getElementById('photo-date');
+        const btnPrevPhoto = document.getElementById('btn-prev-photo');
+        const btnNextPhoto = document.getElementById('btn-next-photo');
+        const photoCounter = document.getElementById('photo-counter');
+        const photoFrame = document.getElementById('photo-frame');
+        const photoLoading = document.getElementById('photo-loading');
+
+        function updateAlbumUI() {
+            photoLoading.style.display = 'none';
+            if (photos.length === 0) {
+                photoCounter.textContent = "0 / 0";
+                btnPrevPhoto.disabled = true;
+                btnNextPhoto.disabled = true;
+                return;
+            }
+
+            const p = photos[currentPhotoIndex];
+            
+            // Animação brutalista de passar página
+            currentPhoto.classList.remove('page-flip-enter');
+            void currentPhoto.offsetWidth; // trigger reflow
+            currentPhoto.classList.add('page-flip-enter');
+            
+            currentPhoto.src = p.dataUrl;
+            
+            // Format date
+            let dStr = "agora pouco";
+            if (p.timestamp) {
+                const d = new Date(p.timestamp);
+                dStr = d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+            }
+            photoDate.textContent = dStr;
+            
+            photoCounter.textContent = `${currentPhotoIndex + 1} / ${photos.length}`;
+            btnPrevPhoto.disabled = currentPhotoIndex === 0;
+            btnNextPhoto.disabled = currentPhotoIndex === photos.length - 1;
+        }
+
+        btnPrevPhoto.addEventListener('click', () => { if(currentPhotoIndex > 0) { currentPhotoIndex--; updateAlbumUI(); } });
+        btnNextPhoto.addEventListener('click', () => { if(currentPhotoIndex < photos.length - 1) { currentPhotoIndex++; updateAlbumUI(); } });
+        
+        btnUploadTrigger.addEventListener('click', () => photoUpload.click());
+        
+        // Compressão de imagem antes de subir
+        photoUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            photoLoading.style.display = 'flex';
+            
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 800; // Limite para não estourar o DB
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (width > height && width > MAX_SIZE) {
+                        height *= MAX_SIZE / width;
+                        width = MAX_SIZE;
+                    } else if (height > MAX_SIZE) {
+                        width *= MAX_SIZE / height;
+                        height = MAX_SIZE;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // Compressão de 60%
+                    
+                    // Salvar
+                    savePhoto(dataUrl);
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function savePhoto(dataUrl) {
+            if (db && currentUser) {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_photos');
+                addDoc(colRef, {
+                    dataUrl: dataUrl,
+                    timestamp: Date.now()
+                }).then(() => {
+                    // updateAlbumUI será chamado pelo listener
+                });
             } else {
-                feedback.style.opacity = '1';
-                setTimeout(() => feedback.style.opacity = '0', 2000);
+                photos.push({ dataUrl, timestamp: Date.now() });
+                currentPhotoIndex = photos.length - 1;
+                updateAlbumUI();
             }
         }
 
-        btnEnter.addEventListener('click', tryUnlock);
-        pass.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') tryUnlock();
-        });
+        // ---------------------------------------------------------
+        // Lógica do Calendário
+        // ---------------------------------------------------------
+        const calendarGrid = document.getElementById('calendar-grid');
+        const monthDisplay = document.getElementById('month-display');
+        const modal = document.getElementById('calendar-modal');
+        const closeModal = document.getElementById('close-modal');
+        const modalDateTitle = document.getElementById('modal-date-title');
+        
+        // Modal Views
+        const dailyForm = document.getElementById('daily-form');
+        const dailyView = document.getElementById('daily-view');
+        const dailyScore = document.getElementById('daily-score');
+        const dailyScoreVal = document.getElementById('daily-score-val');
+        const dailyText = document.getElementById('daily-text');
+        const viewScore = document.getElementById('view-score');
+        const viewText = document.getElementById('view-text');
+        const btnSubmitDaily = document.getElementById('btn-submit-daily');
+        const dailyStatus = document.getElementById('daily-status');
 
-        // Lógica do Slider
-        const slider = document.getElementById('satisfacao');
-        const sliderVal = document.getElementById('slider-val');
+        let currentDate = new Date();
+        let selectedDateStr = "";
 
-        slider.addEventListener('input', function() {
-            sliderVal.textContent = this.value + '%';
-        });
-    </script>
-</body>
+        const monthNames = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+
+        dailyScore.addEventListener('input', function() { dailyScoreVal.textContent = this.value; });
+
+        function renderCalendar() {
+            calendarGrid.innerHTML = '';
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            monthDisplay.textContent = `${monthNames[month]} ${year}`;
+            
+            const firstDay = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Espaços vazios antes do dia 1
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                calendarGrid.appendChild(emptyDiv);
+            }
+            
+            const today = new Date();
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayBtn = document.createElement('button');
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                
+                dayBtn.textContent = i;
+                dayBtn.className = "aspect-square flex items-center justify-center txt-brat text-xl brutal-border brutal-btn transition-colors hover:bg-black hover:text-[#8ceb0d]";
+                
+                // Se já tem dados salvos
+                if (calendarData[dateStr]) {
+                    dayBtn.classList.add('bg-black', 'text-[#8ceb0d]');
+                    dayBtn.classList.remove('hover:bg-black', 'hover:text-[#8ceb0d]');
+                    dayBtn.classList.add('hover:bg-white', 'hover:text-black');
+                } else {
+                    dayBtn.classList.add('bg-white', 'text-black');
+                }
+
+                // Destacar o dia de hoje
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+                    dayBtn.style.borderWidth = '8px';
+                }
+                
+                dayBtn.onclick = () => openModal(dateStr, i, month, year);
+                calendarGrid.appendChild(dayBtn);
+            }
+        }
+
+        document.getElementById('prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
+        document.getElementById('next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); };
+
+        function openModal(dateStr, day, month, year) {
+            selectedDateStr = dateStr;
+            modalDateTitle.textContent = `${day} de ${monthNames[month]}`;
+            modal.classList.remove('hidden');
+            dailyStatus.classList.add('hidden');
+            dailyStatus.textContent = 'enviando...';
+            btnSubmitDaily.disabled = false;
+            
+            if (calendarData[dateStr]) {
+                // Já preenchido
+                dailyForm.classList.add('hidden');
+                dailyView.classList.remove('hidden');
+                viewScore.textContent = calendarData[dateStr].score;
+                viewText.textContent = calendarData[dateStr].text;
+            } else {
+                // Novo preenchimento
+                dailyForm.classList.remove('hidden');
+                dailyView.classList.add('hidden');
+                dailyScore.value = 100;
+                dailyScoreVal.textContent = 100;
+                dailyText.value = '';
+            }
+        }
+
+        closeModal.onclick = () => modal.classList.add('hidden');
+
+        dailyForm.onsubmit = (e) => {
+            e.preventDefault();
+            btnSubmitDaily.disabled = true;
+            dailyStatus.classList.remove('hidden');
+            
+            const score = dailyScore.value;
+            const text = dailyText.value;
+
+            // Enviar e-mail por AJAX via FormSubmit
+            fetch("https://formsubmit.co/ajax/dmitrichaves@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: `Nova Avaliação Diária! (${selectedDateStr})`,
+                    Nota_do_Dia: score,
+                    Relato: text
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  dailyStatus.textContent = 'salvo e enviado com sucesso!';
+              }).catch(err => {
+                  dailyStatus.textContent = 'erro ao enviar e-mail, mas foi salvo no site!';
+              });
+
+            // Salvar no Firebase
+            const dataToSave = { score, text, date: selectedDateStr };
+            if (db && currentUser) {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_calendar');
+                addDoc(colRef, dataToSave).then(() => {
+                    // Update será feito via listener
+                    setTimeout(() => modal.classList.add('hidden'), 1500);
+                });
+            } else {
+                calendarData[selectedDateStr] = dataToSave;
+                renderCalendar();
+                setTimeout(() => modal.classList.add('hidden'), 1500);
+            }
+        };
+
+        // ---------------------------------------------------------
+        // Conexão com Firebase (Listeners)
+        // ---------------------------------------------------------
+        function initRealtimeFeatures() {
+            if (!currentUser || !db) return;
+
+            // Listener Álbum
+            const photosRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_photos');
+            onSnapshot(photosRef, (snapshot) => {
+                const loaded = [];
+                snapshot.forEach(doc => { loaded.push(doc.data()); });
+                
+                // Ordenar por data (simples via JS Rule 2)
+                loaded.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                
+                photos = loaded;
+                if(photos.length > 0 && currentPhotoIndex >= photos.length) {
+                    currentPhotoIndex = photos.length - 1;
+                }
+                updateAlbumUI();
+            }, (error) => console.error("Erro Album:", error));
+
+            // Listener Calendário
+            const calendarRef = collection(db, 'artifacts', appId, 'public', 'data', 'giulia_calendar');
+            onSnapshot(calendarRef, (snapshot) => {
+                calendarData = {};
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    calendarData[data.date] = data;
+                });
+                renderCalendar();
+            }, (error) => console.error("Erro Calendario:", error));
+        }
+
+        function initInMemoryFeatures() {
+            renderCalendar();
+            photoLoading.style.display = 'none';
+        }
+
+    </script> 
+</body> 
 </html>
