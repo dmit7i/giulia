@@ -311,23 +311,49 @@
 
         <!-- Modal Calendário -->
         <div id="calendar-modal" class="hidden fixed inset-0 bg-black/90 z-50 flex flex-col justify-center items-center p-4">
-            <div class="bg-[#8ceb0d] w-full max-w-2xl brutal-border brutal-shadow-white p-8 relative">
+            <div class="bg-[#8ceb0d] w-full max-w-2xl brutal-border brutal-shadow-white p-8 relative max-h-[90vh] overflow-y-auto">
                 <button id="close-modal" class="absolute top-4 right-4 txt-brat text-4xl hover:text-white">&times;</button>
                 
                 <h3 id="modal-date-title" class="txt-brat text-4xl mb-6 border-b-4 border-black pb-2">dia 00</h3>
                 
+                <!-- Abas -->
+                <div class="flex gap-2 mb-6">
+                    <button id="btn-tab-giulia" type="button" class="flex-1 bg-black text-[#8ceb0d] txt-brat text-2xl py-2 brutal-border transition-colors">giulia.</button>
+                    <button id="btn-tab-dmitri" type="button" class="flex-1 bg-white text-black txt-brat text-2xl py-2 brutal-border transition-colors opacity-50 hover:opacity-100">dmitri.</button>
+                </div>
+
                 <form id="daily-form" class="flex flex-col gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label class="txt-brat text-2xl">nota pro dia (1-100):</label>
-                        <div class="flex items-center gap-4">
-                            <input type="range" id="daily-score" min="0" max="100" value="100" class="flex-grow">
-                            <span id="daily-score-val" class="txt-brat text-3xl bg-black text-[#8ceb0d] px-3 py-1 brutal-border">100</span>
+                    
+                    <!-- Aba Giulia -->
+                    <div id="tab-giulia" class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="txt-brat text-2xl">nota pro dia (giulia):</label>
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="score-giulia" min="0" max="100" value="100" class="flex-grow">
+                                <span id="val-giulia" class="txt-brat text-3xl bg-black text-[#8ceb0d] px-3 py-1 brutal-border">100</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="txt-brat text-2xl">como foi hoje?</label>
+                            <textarea id="text-giulia" rows="4" placeholder="visão da giulia..." class="w-full bg-white border-4 border-black p-4 font-bold text-lg resize-none"></textarea>
                         </div>
                     </div>
 
-                    <div class="flex flex-col gap-2">
-                        <label class="txt-brat text-2xl">como foi hoje?</label>
-                        <textarea id="daily-text" rows="4" placeholder="relatório diário..." required class="w-full bg-white border-4 border-black p-4 font-bold text-lg resize-none"></textarea>
+                    <!-- Aba Dmitri -->
+                    <div id="tab-dmitri" class="flex flex-col gap-6 hidden">
+                        <div class="flex flex-col gap-2">
+                            <label class="txt-brat text-2xl">nota pro dia (dmitri):</label>
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="score-dmitri" min="0" max="100" value="100" class="flex-grow">
+                                <span id="val-dmitri" class="txt-brat text-3xl bg-black text-[#8ceb0d] px-3 py-1 brutal-border">100</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="txt-brat text-2xl">como foi hoje?</label>
+                            <textarea id="text-dmitri" rows="4" placeholder="visão do dmitri..." class="w-full bg-white border-4 border-black p-4 font-bold text-lg resize-none"></textarea>
+                        </div>
                     </div>
 
                     <button type="submit" id="btn-submit-daily" class="bg-black text-[#8ceb0d] txt-brat text-3xl px-6 py-4 hover:bg-white hover:text-black transition-colors brutal-border mt-2">
@@ -335,18 +361,6 @@
                     </button>
                     <p id="daily-status" class="txt-brat text-center mt-2 hidden">enviando...</p>
                 </form>
-                
-                <!-- Display para dias já preenchidos -->
-                <div id="daily-view" class="hidden flex flex-col gap-4">
-                    <div class="bg-black text-[#8ceb0d] p-4 brutal-border">
-                        <p class="txt-brat text-xl">nota:</p>
-                        <p id="view-score" class="txt-brat text-5xl">100</p>
-                    </div>
-                    <div class="bg-white text-black p-4 brutal-border">
-                        <p class="txt-brat text-xl border-b-2 border-black mb-2">relatório:</p>
-                        <p id="view-text" class="font-bold text-lg whitespace-pre-wrap"></p>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -469,7 +483,7 @@
         // ---------------------------------------------------------
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // As suas credenciais do Firebase
         const firebaseConfig = {
@@ -515,7 +529,7 @@
         });
 
         // ---------------------------------------------------------
-        // UI e Elementos DOM
+        // UI e Elementos DOM do Álbum
         // ---------------------------------------------------------
         const photoUpload = document.getElementById('photo-upload');
         const btnUploadTrigger = document.getElementById('btn-upload-trigger');
@@ -569,15 +583,15 @@
         
         btnUploadTrigger.addEventListener('click', () => photoUpload.click());
 
-        // Lógica de Salvar e Apagar
+        // Lógica de Salvar e Apagar do Álbum
         btnSaveCaption.addEventListener('click', async () => {
-            if (photos.length === 0 || !currentUser) return;
+            if (photos.length === 0 || !db) return;
             const p = photos[currentPhotoIndex];
             const originalText = btnSaveCaption.textContent;
             btnSaveCaption.textContent = 'salvando...';
             
             try {
-                const docRef = doc(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos', p.id);
+                const docRef = doc(db, 'giulia_photos', p.id);
                 await updateDoc(docRef, { caption: photoCaption.value });
                 btnSaveCaption.textContent = 'salvo!';
             } catch(e) {
@@ -587,18 +601,46 @@
             setTimeout(() => { btnSaveCaption.textContent = originalText; }, 2000);
         });
 
+        let deleteTimeout;
         btnDeletePhoto.addEventListener('click', async () => {
-            if (photos.length === 0 || !currentUser) return;
-            const confirmDelete = confirm("tem certeza que quer apagar essa memória de vez?");
-            if (confirmDelete) {
-                const p = photos[currentPhotoIndex];
-                try {
-                    const docRef = doc(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos', p.id);
-                    await deleteDoc(docRef);
-                    // O listener do Firebase (onSnapshot) vai ver que sumiu e atualizar a tela sozinho
-                } catch(e) {
-                    console.error("Erro ao apagar:", e);
-                }
+            if (photos.length === 0 || !db) return;
+            
+            // Passo 1: Confirmação direto no botão (substituindo o popup do navegador)
+            if (btnDeletePhoto.textContent === 'apagar') {
+                btnDeletePhoto.textContent = 'tem certeza?';
+                btnDeletePhoto.classList.remove('bg-red-500', 'text-white');
+                btnDeletePhoto.classList.add('bg-black', 'text-[#8ceb0d]');
+                
+                deleteTimeout = setTimeout(() => {
+                    // Se não confirmar em 3s, volta ao normal
+                    btnDeletePhoto.textContent = 'apagar';
+                    btnDeletePhoto.classList.add('bg-red-500', 'text-white');
+                    btnDeletePhoto.classList.remove('bg-black', 'text-[#8ceb0d]');
+                }, 3000);
+                return;
+            }
+
+            // Passo 2: O usuário clicou de novo ("tem certeza?") - Vamos apagar!
+            clearTimeout(deleteTimeout);
+            const p = photos[currentPhotoIndex];
+            btnDeletePhoto.textContent = 'apagando...';
+            
+            try {
+                const docRef = doc(db, 'giulia_photos', p.id);
+                await deleteDoc(docRef);
+                
+                // Reseta visual do botão pro padrão
+                btnDeletePhoto.textContent = 'apagar';
+                btnDeletePhoto.classList.add('bg-red-500', 'text-white');
+                btnDeletePhoto.classList.remove('bg-black', 'text-[#8ceb0d]');
+            } catch(e) {
+                console.error("Erro ao apagar:", e);
+                btnDeletePhoto.textContent = 'erro!';
+                setTimeout(() => { 
+                    btnDeletePhoto.textContent = 'apagar'; 
+                    btnDeletePhoto.classList.add('bg-red-500', 'text-white');
+                    btnDeletePhoto.classList.remove('bg-black', 'text-[#8ceb0d]');
+                }, 2000);
             }
         });
         
@@ -640,8 +682,8 @@
         });
 
         function savePhoto(dataUrl) {
-            if (!currentUser) return;
-            const colRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos');
+            if (!db) return;
+            const colRef = collection(db, 'giulia_photos');
             addDoc(colRef, {
                 dataUrl: dataUrl,
                 timestamp: Date.now()
@@ -649,7 +691,7 @@
         }
 
         // ---------------------------------------------------------
-        // Lógica do Calendário
+        // Lógica do Calendário com Abas
         // ---------------------------------------------------------
         const calendarGrid = document.getElementById('calendar-grid');
         const monthDisplay = document.getElementById('month-display');
@@ -657,13 +699,21 @@
         const closeModal = document.getElementById('close-modal');
         const modalDateTitle = document.getElementById('modal-date-title');
         
+        // Elementos das Abas
+        const btnTabGiulia = document.getElementById('btn-tab-giulia');
+        const btnTabDmitri = document.getElementById('btn-tab-dmitri');
+        const tabGiulia = document.getElementById('tab-giulia');
+        const tabDmitri = document.getElementById('tab-dmitri');
+
         const dailyForm = document.getElementById('daily-form');
-        const dailyView = document.getElementById('daily-view');
-        const dailyScore = document.getElementById('daily-score');
-        const dailyScoreVal = document.getElementById('daily-score-val');
-        const dailyText = document.getElementById('daily-text');
-        const viewScore = document.getElementById('view-score');
-        const viewText = document.getElementById('view-text');
+        const scoreGiulia = document.getElementById('score-giulia');
+        const valGiulia = document.getElementById('val-giulia');
+        const textGiulia = document.getElementById('text-giulia');
+        
+        const scoreDmitri = document.getElementById('score-dmitri');
+        const valDmitri = document.getElementById('val-dmitri');
+        const textDmitri = document.getElementById('text-dmitri');
+        
         const btnSubmitDaily = document.getElementById('btn-submit-daily');
         const dailyStatus = document.getElementById('daily-status');
 
@@ -672,7 +722,33 @@
 
         const monthNames = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 
-        dailyScore.addEventListener('input', function() { dailyScoreVal.textContent = this.value; });
+        scoreGiulia.addEventListener('input', function() { valGiulia.textContent = this.value; });
+        scoreDmitri.addEventListener('input', function() { valDmitri.textContent = this.value; });
+
+        function switchTab(tab) {
+            if (tab === 'giulia') {
+                btnTabGiulia.classList.remove('bg-white', 'text-black', 'opacity-50');
+                btnTabGiulia.classList.add('bg-black', 'text-[#8ceb0d]');
+                
+                btnTabDmitri.classList.remove('bg-black', 'text-[#8ceb0d]');
+                btnTabDmitri.classList.add('bg-white', 'text-black', 'opacity-50');
+                
+                tabGiulia.classList.remove('hidden');
+                tabDmitri.classList.add('hidden');
+            } else {
+                btnTabDmitri.classList.remove('bg-white', 'text-black', 'opacity-50');
+                btnTabDmitri.classList.add('bg-black', 'text-[#8ceb0d]');
+                
+                btnTabGiulia.classList.remove('bg-black', 'text-[#8ceb0d]');
+                btnTabGiulia.classList.add('bg-white', 'text-black', 'opacity-50');
+                
+                tabDmitri.classList.remove('hidden');
+                tabGiulia.classList.add('hidden');
+            }
+        }
+
+        btnTabGiulia.onclick = () => switchTab('giulia');
+        btnTabDmitri.onclick = () => switchTab('dmitri');
 
         function renderCalendar() {
             calendarGrid.innerHTML = '';
@@ -726,31 +802,33 @@
             dailyStatus.textContent = 'enviando...';
             btnSubmitDaily.disabled = false;
             
-            if (calendarData[dateStr]) {
-                dailyForm.classList.add('hidden');
-                dailyView.classList.remove('hidden');
-                viewScore.textContent = calendarData[dateStr].score;
-                viewText.textContent = calendarData[dateStr].text;
-            } else {
-                dailyForm.classList.remove('hidden');
-                dailyView.classList.add('hidden');
-                dailyScore.value = 100;
-                dailyScoreVal.textContent = 100;
-                dailyText.value = '';
-            }
+            switchTab('giulia'); // Abre sempre na aba da Giulia por padrão
+            
+            const existingData = calendarData[dateStr] || {};
+
+            // Carrega os dados salvos ou preenche com valores iniciais
+            scoreGiulia.value = existingData.scoreGiulia || existingData.score || 100; // fallback pra versão antiga se existir
+            valGiulia.textContent = scoreGiulia.value;
+            textGiulia.value = existingData.textGiulia || existingData.text || '';
+
+            scoreDmitri.value = existingData.scoreDmitri || 100;
+            valDmitri.textContent = scoreDmitri.value;
+            textDmitri.value = existingData.textDmitri || '';
         }
 
         closeModal.onclick = () => modal.classList.add('hidden');
 
-        dailyForm.onsubmit = (e) => {
+        dailyForm.onsubmit = async (e) => {
             e.preventDefault();
             btnSubmitDaily.disabled = true;
             dailyStatus.classList.remove('hidden');
             
-            const score = dailyScore.value;
-            const text = dailyText.value;
+            const sGiulia = scoreGiulia.value;
+            const tGiulia = textGiulia.value;
+            const sDmitri = scoreDmitri.value;
+            const tDmitri = textDmitri.value;
 
-            // Envia e-mail via FormSubmit
+            // Envia e-mail via FormSubmit com as informações dos dois
             fetch("https://formsubmit.co/ajax/dmitrichaves@gmail.com", {
                 method: "POST",
                 headers: { 
@@ -759,8 +837,10 @@
                 },
                 body: JSON.stringify({
                     _subject: `Nova Avaliação Diária! (${selectedDateStr})`,
-                    Nota_do_Dia: score,
-                    Relato: text
+                    Nota_Giulia: sGiulia,
+                    Relato_Giulia: tGiulia,
+                    Nota_Dmitri: sDmitri,
+                    Relato_Dmitri: tDmitri
                 })
             }).then(response => response.json())
               .then(data => {
@@ -769,23 +849,39 @@
                   dailyStatus.textContent = 'erro ao enviar e-mail, mas foi salvo no site!';
               });
 
-            if (!currentUser) return;
+            const dataToSave = { 
+                scoreGiulia: sGiulia, 
+                textGiulia: tGiulia, 
+                scoreDmitri: sDmitri, 
+                textDmitri: tDmitri,
+                date: selectedDateStr 
+            };
 
-            const dataToSave = { score, text, date: selectedDateStr };
-            const colRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_calendar');
+            // Salva na tela imediatamente para garantir que apareça independente do banco
+            calendarData[selectedDateStr] = dataToSave;
+            renderCalendar();
             
-            addDoc(colRef, dataToSave).then(() => {
+            if (!db) return;
+            
+            try {
+                // Usando setDoc com merge para atualizar o dia específico
+                const docRef = doc(db, 'giulia_calendar', selectedDateStr);
+                await setDoc(docRef, dataToSave, { merge: true });
                 setTimeout(() => modal.classList.add('hidden'), 1500);
-            }).catch(err => console.error("Erro no calendário:", err));
+            } catch (err) {
+                console.error("Erro no calendário:", err);
+                dailyStatus.textContent = 'erro ao salvar!';
+                btnSubmitDaily.disabled = false;
+            }
         };
 
         // ---------------------------------------------------------
         // Conexão em Tempo Real
         // ---------------------------------------------------------
         function initRealtimeFeatures() {
-            if (!currentUser) return;
+            if (!db) return;
 
-            const photosRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos');
+            const photosRef = collection(db, 'giulia_photos');
             onSnapshot(photosRef, (snapshot) => {
                 const loaded = [];
                 // Agora estamos pegando o ID de cada foto pra poder editar/apagar
@@ -800,7 +896,7 @@
                 updateAlbumUI();
             }, (error) => console.error("Erro Album:", error));
 
-            const calendarRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_calendar');
+            const calendarRef = collection(db, 'giulia_calendar');
             onSnapshot(calendarRef, (snapshot) => {
                 calendarData = {};
                 snapshot.forEach(doc => {
