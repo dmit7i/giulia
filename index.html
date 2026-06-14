@@ -458,14 +458,13 @@
         slider.addEventListener('input', function() { sliderVal.textContent = this.value + '%'; }); 
 
         // ---------------------------------------------------------
-        // INTEGRAÇÃO FIREBASE (Para funcionar no GitHub Pages)
+        // INTEGRAÇÃO FIREBASE 
         // ---------------------------------------------------------
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 🔴 ATENÇÃO: COLE AQUI AS CREDENCIAIS DO SEU FIREBASE 🔴
-        // Siga as instruções do chat para gerar isso no console.firebase.google.com
+        // As suas credenciais do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyApMFZElJ4xKpnoYFmd2E_hRvg0tUBJ928",
             authDomain: "site-giulia-124cc.firebaseapp.com",
@@ -477,39 +476,40 @@
             measurementId: "G-34QL50FWLG"
         };
         
-        let db = null;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Mantemos o appId base para organizar as pastas
+        const siteAppId = "site-giulia-124cc"; 
+        
         let currentUser = null;
-
-        // Variáveis de Estado
         let photos = [];
         let currentPhotoIndex = 0;
-        let calendarData = {}; // { "2023-10-15": { score: 100, text: "..." } }
+        let calendarData = {}; 
 
-        // Verifica se você já atualizou as chaves
-        if (firebaseConfig.apiKey !== "SUA_API_KEY") {
+        // Fluxo de Autenticação Anónima
+        const initAuth = async () => {
             try {
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                db = getFirestore(app);
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Erro na autenticação. Verifique se ativou o 'Anónimo' no Firebase:", error);
+                initInMemoryFeatures();
+            }
+        };
+        
+        initAuth();
 
-                signInAnonymously(auth).catch((error) => {
-                    console.error("Erro de autenticação:", error);
-                    initInMemoryFeatures();
-                });
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                initRealtimeFeatures();
+            }
+        });
 
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUser = user;
-                        initRealtimeFeatures();
-                    }
-                });
-            } catch(e) { console.warn("Erro ao iniciar Firebase", e); initInMemoryFeatures(); }
-        } else {
-            console.warn("⚠️ Firebase não configurado. Rodando em modo local (dados não serão salvos no GitHub).");
-            initInMemoryFeatures();
-        }
-
-        // Elementos DOM Álbum
+        // ---------------------------------------------------------
+        // UI e Elementos DOM
+        // ---------------------------------------------------------
         const photoUpload = document.getElementById('photo-upload');
         const btnUploadTrigger = document.getElementById('btn-upload-trigger');
         const currentPhoto = document.getElementById('current-photo');
@@ -517,7 +517,6 @@
         const btnPrevPhoto = document.getElementById('btn-prev-photo');
         const btnNextPhoto = document.getElementById('btn-next-photo');
         const photoCounter = document.getElementById('photo-counter');
-        const photoFrame = document.getElementById('photo-frame');
         const photoLoading = document.getElementById('photo-loading');
 
         function updateAlbumUI() {
@@ -531,14 +530,12 @@
 
             const p = photos[currentPhotoIndex];
             
-            // Animação brutalista de passar página
             currentPhoto.classList.remove('page-flip-enter');
-            void currentPhoto.offsetWidth; // trigger reflow
+            void currentPhoto.offsetWidth; 
             currentPhoto.classList.add('page-flip-enter');
             
             currentPhoto.src = p.dataUrl;
             
-            // Format date
             let dStr = "agora pouco";
             if (p.timestamp) {
                 const d = new Date(p.timestamp);
@@ -556,7 +553,7 @@
         
         btnUploadTrigger.addEventListener('click', () => photoUpload.click());
         
-        // Compressão de imagem antes de subir
+        // Lógica de compressão e upload de foto
         photoUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -568,7 +565,7 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 800; // Limite para não estourar o DB
+                    const MAX_SIZE = 800; 
                     let width = img.width;
                     let height = img.height;
                     
@@ -585,9 +582,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // Compressão de 60%
-                    
-                    // Salvar
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6); 
                     savePhoto(dataUrl);
                 };
                 img.src = ev.target.result;
@@ -596,19 +591,12 @@
         });
 
         function savePhoto(dataUrl) {
-            if (db && currentUser) {
-                const colRef = collection(db, 'giulia_photos');
-                addDoc(colRef, {
-                    dataUrl: dataUrl,
-                    timestamp: Date.now()
-                }).then(() => {
-                    // updateAlbumUI será chamado pelo listener
-                });
-            } else {
-                photos.push({ dataUrl, timestamp: Date.now() });
-                currentPhotoIndex = photos.length - 1;
-                updateAlbumUI();
-            }
+            if (!currentUser) return;
+            const colRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos');
+            addDoc(colRef, {
+                dataUrl: dataUrl,
+                timestamp: Date.now()
+            }).catch(err => console.error("Erro ao guardar foto:", err));
         }
 
         // ---------------------------------------------------------
@@ -620,7 +608,6 @@
         const closeModal = document.getElementById('close-modal');
         const modalDateTitle = document.getElementById('modal-date-title');
         
-        // Modal Views
         const dailyForm = document.getElementById('daily-form');
         const dailyView = document.getElementById('daily-view');
         const dailyScore = document.getElementById('daily-score');
@@ -645,10 +632,9 @@
             
             monthDisplay.textContent = `${monthNames[month]} ${year}`;
             
-            const firstDay = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+            const firstDay = new Date(year, month, 1).getDay(); 
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             
-            // Espaços vazios antes do dia 1
             for (let i = 0; i < firstDay; i++) {
                 const emptyDiv = document.createElement('div');
                 calendarGrid.appendChild(emptyDiv);
@@ -663,7 +649,6 @@
                 dayBtn.textContent = i;
                 dayBtn.className = "aspect-square flex items-center justify-center txt-brat text-xl brutal-border brutal-btn transition-colors hover:bg-black hover:text-[#8ceb0d]";
                 
-                // Se já tem dados salvos
                 if (calendarData[dateStr]) {
                     dayBtn.classList.add('bg-black', 'text-[#8ceb0d]');
                     dayBtn.classList.remove('hover:bg-black', 'hover:text-[#8ceb0d]');
@@ -672,7 +657,6 @@
                     dayBtn.classList.add('bg-white', 'text-black');
                 }
 
-                // Destacar o dia de hoje
                 if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
                     dayBtn.style.borderWidth = '8px';
                 }
@@ -694,13 +678,11 @@
             btnSubmitDaily.disabled = false;
             
             if (calendarData[dateStr]) {
-                // Já preenchido
                 dailyForm.classList.add('hidden');
                 dailyView.classList.remove('hidden');
                 viewScore.textContent = calendarData[dateStr].score;
                 viewText.textContent = calendarData[dateStr].text;
             } else {
-                // Novo preenchimento
                 dailyForm.classList.remove('hidden');
                 dailyView.classList.add('hidden');
                 dailyScore.value = 100;
@@ -719,7 +701,7 @@
             const score = dailyScore.value;
             const text = dailyText.value;
 
-            // Enviar e-mail por AJAX via FormSubmit
+            // Envia e-mail via FormSubmit
             fetch("https://formsubmit.co/ajax/dmitrichaves@gmail.com", {
                 method: "POST",
                 headers: { 
@@ -738,34 +720,27 @@
                   dailyStatus.textContent = 'erro ao enviar e-mail, mas foi salvo no site!';
               });
 
-            // Salvar no Firebase
+            if (!currentUser) return;
+
             const dataToSave = { score, text, date: selectedDateStr };
-            if (db && currentUser) {
-                const colRef = collection(db, 'giulia_calendar');
-                addDoc(colRef, dataToSave).then(() => {
-                    // Update será feito via listener
-                    setTimeout(() => modal.classList.add('hidden'), 1500);
-                });
-            } else {
-                calendarData[selectedDateStr] = dataToSave;
-                renderCalendar();
+            const colRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_calendar');
+            
+            addDoc(colRef, dataToSave).then(() => {
                 setTimeout(() => modal.classList.add('hidden'), 1500);
-            }
+            }).catch(err => console.error("Erro no calendário:", err));
         };
 
         // ---------------------------------------------------------
-        // Conexão com Firebase (Listeners)
+        // Conexão em Tempo Real
         // ---------------------------------------------------------
         function initRealtimeFeatures() {
-            if (!currentUser || !db) return;
+            if (!currentUser) return;
 
-            // Listener Álbum
-            const photosRef = collection(db, 'giulia_photos');
+            const photosRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_photos');
             onSnapshot(photosRef, (snapshot) => {
                 const loaded = [];
                 snapshot.forEach(doc => { loaded.push(doc.data()); });
                 
-                // Ordenar por data
                 loaded.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
                 
                 photos = loaded;
@@ -775,8 +750,7 @@
                 updateAlbumUI();
             }, (error) => console.error("Erro Album:", error));
 
-            // Listener Calendário
-            const calendarRef = collection(db, 'giulia_calendar');
+            const calendarRef = collection(db, 'artifacts', siteAppId, 'public', 'data', 'giulia_calendar');
             onSnapshot(calendarRef, (snapshot) => {
                 calendarData = {};
                 snapshot.forEach(doc => {
